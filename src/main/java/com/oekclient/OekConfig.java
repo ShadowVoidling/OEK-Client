@@ -19,6 +19,8 @@ public final class OekConfig {
 
     public Set<Module> enabled = EnumSet.noneOf(Module.class);
     public Set<OreType> selectedOres = EnumSet.allOf(OreType.class);
+    public boolean masterEnabled = true;
+    public boolean showHud = false;
     public int scanRadius = 16;
     public int verticalRadius = 16;
     public int maxRadarDots = 100;
@@ -31,7 +33,8 @@ public final class OekConfig {
         for (Module module : Module.values()) if (module.initialState) enabled.add(module);
     }
 
-    public boolean active(Module module) { return enabled.contains(module); }
+    public boolean active(Module module) { return masterEnabled && enabled.contains(module); }
+    public boolean selected(Module module) { return enabled.contains(module); }
     public void toggle(Module module) {
         if (!enabled.remove(module)) enabled.add(module);
         save();

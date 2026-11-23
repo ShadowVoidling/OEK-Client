@@ -17,7 +17,7 @@ public final class OekClient implements ClientModInitializer {
     public static final String MOD_ID = "oekclient";
     public static OekConfig config;
     public static final OreScanner SCANNER = new OreScanner();
-    private static KeyMapping menuKey, oreKey, waypointKey, zoomKey;
+    private static KeyMapping menuKey, oreKey, waypointKey, zoomKey, masterKey, hudKey;
     private static int oldFov = -1;
     private static double oldGamma = Double.NaN;
     private static boolean boostApplied;
@@ -30,6 +30,8 @@ public final class OekClient implements ClientModInitializer {
         oreKey = key("key.oekclient.ore", GLFW.GLFW_KEY_X, category);
         waypointKey = key("key.oekclient.waypoint", GLFW.GLFW_KEY_B, category);
         zoomKey = key("key.oekclient.zoom", GLFW.GLFW_KEY_Z, category);
+        masterKey = key("key.oekclient.master", GLFW.GLFW_KEY_P, category);
+        hudKey = key("key.oekclient.hud", GLFW.GLFW_KEY_H, category);
         ClientTickEvents.END_CLIENT_TICK.register(this::tick);
         HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT,
                 Identifier.fromNamespaceAndPath(MOD_ID, "hud"), OekHud::render);
@@ -40,10 +42,23 @@ public final class OekClient implements ClientModInitializer {
     }
 
     private void tick(Minecraft client) {
-        while (menuKey.consumeClick()) client.setScreen(new OekScreen(client.screen));
+        while (menuKey.consumeClick()) {
+            if (client.screen instanceof OekScreen) client.setScreen(null);
+            else if (client.screen == null) client.setScreen(new OekScreen(null));
+        }
+        while (masterKey.consumeClick()) {
+            config.masterEnabled = !config.masterEnabled;
+            config.save();
+            notify(client, "Modules: " + (config.masterEnabled ? "ON" : "OFF"));
+        }
+        while (hudKey.consumeClick()) {
+            config.showHud = !config.showHud;
+            config.save();
+            notify(client, "OEK HUD: " + (config.showHud ? "VISIBLE" : "HIDDEN"));
+        }
         while (oreKey.consumeClick()) {
             config.toggle(Module.ORE_RADAR);
-            notify(client, "Ore Radar: " + (config.active(Module.ORE_RADAR) ? "ON" : "OFF"));
+            notify(client, "Ore Radar selected: " + (config.selected(Module.ORE_RADAR) ? "ON" : "OFF"));
         }
         while (waypointKey.consumeClick()) {
             if (client.player == null || client.level == null) continue;

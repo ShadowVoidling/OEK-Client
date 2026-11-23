@@ -9,16 +9,17 @@ import java.util.List;
 import java.util.Locale;
 
 public final class OekHud {
-    private static final int WHITE = 0xFFF3F7FF;
-    private static final int MUTED = 0xFFB3C7D8;
-    private static final int ACCENT = 0xFF55CBFF;
-    private static final int PANEL = 0xBB101D2B;
+    private static final int WHITE = 0xFFF9EEFF;
+    private static final int MUTED = 0xFFD2A9DE;
+    private static final int ACCENT = 0xFFFF47D1;
+    private static final int PANEL = 0xD0170827;
     private OekHud() {}
 
     public static void render(GuiGraphics draw, DeltaTracker delta) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.options.hideGui || mc.screen instanceof OekScreen) return;
         OekConfig conf = OekClient.config;
+        if (!conf.showHud) return;
         int x = 8, y = 8;
         int lines = 1;
         if (conf.active(Module.COORDINATES)) lines++;
@@ -26,7 +27,7 @@ public final class OekHud {
         if (conf.active(Module.FPS)) lines++;
         if (conf.active(Module.WAYPOINT) && conf.waypointX != null) lines++;
         draw.fill(x - 4, y - 4, x + 175, y + lines * 12 + 3, PANEL);
-        draw.drawString(mc.font, "OEK CLIENT  v0.1", x, y, ACCENT, true); y += 12;
+        draw.drawString(mc.font, "OEK CLIENT  v0.2", x, y, ACCENT, true); y += 12;
         BlockPos pos = mc.player.blockPosition();
         if (conf.active(Module.COORDINATES)) {
             draw.drawString(mc.font, "XYZ  " + pos.getX() + " / " + pos.getY() + " / " + pos.getZ(), x, y, WHITE, true);
@@ -73,8 +74,8 @@ public final class OekHud {
         draw.fill(left, top, left + size, top + 138, PANEL);
         draw.drawString(mc.font, "ORE RADAR", left + 7, top + 6, ACCENT, true);
         draw.drawString(mc.font, "N", cx - 3, top + 19, MUTED, false);
-        draw.fill(left + 9, top + 27, left + size - 9, top + 119, 0x6023394B);
-        draw.fill(cx, top + 28, cx + 1, top + 118, 0x5062829A);
+        draw.fill(left + 9, top + 27, left + size - 9, top + 119, 0x60512269);
+        draw.fill(cx, top + 28, cx + 1, top + 118, 0x50BD50BA);
         draw.fill(left + 10, cy, left + size - 10, cy + 1, 0x5062829A);
         List<OreScanner.OreHit> hits = OekClient.SCANNER.hits();
         BlockPos player = mc.player.blockPosition();
